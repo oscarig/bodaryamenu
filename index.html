@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Menú Boda Rafa & Ana</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-oro: #c5a059;
+            --texto-grafito: #333333;
+            --ancho-max: 520px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Great Vibes', cursive;
+            background-color: #fcfbf9;
+            color: var(--texto-grafito);
+            text-align: center;
+            overflow-x: hidden;
+        }
+
+        .main-wrapper {
+            width: 100%;
+            max-width: var(--ancho-max);
+            margin: 0 auto;
+            min-height: 100dvh;
+            background: url('asistenciafoto.jpeg') center/cover no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px 25px;
+        }
+
+        /* TÍTULO CAMBIADO A DORADO */
+        h1 { font-size: 3.5rem; margin-bottom: 5px; color: var(--color-oro); }
+        p.subtitle { font-size: 1.6rem; margin-bottom: 30px; padding: 0 10px;  }
+
+        .form-container { width: 100%; max-width: 380px; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; font-size: 1.7rem; margin-bottom: 5px; color: var(--texto-grafito); }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            font-family: 'Great Vibes', cursive;
+            font-size: 1.5rem;
+            color: var(--texto-grafito);
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .plate-selector {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 15px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .plate-selector span { font-size: 1.4rem; line-height: 1.1; flex: 1; margin-right: 10px; }
+
+        .input-number-small {
+            width: 65px !important;
+            height: 45px;
+            text-align: center;
+            border: 2px solid var(--color-oro) !important;
+            border-radius: 8px;
+            background: white !important;
+        }
+
+        #aviso-platos { font-size: 1.5rem; color: #d9534f; margin: 15px 0; text-align: center; }
+
+        .btn-confirmar {
+            width: 85px;
+            height: 85px;
+            background: url('camrafotofiltro.jpeg') center/cover;
+            border-radius: 50%;
+            border: 2px solid white;
+            margin: 20px auto 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .tap-msg { font-size: 1.4rem; opacity: 0.8; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="main-wrapper">
+        <h1>Menú</h1>
+        <p class="subtitle">Indicadnos vuestras preferencias para el banquete.</p>
+
+        <div class="form-container">
+            <div class="form-group">
+                <label>Nombre de la familia / pareja:</label>
+                <input type="text" id="nombre-menu" placeholder="Vuestro nombre...">
+            </div>
+
+            <div class="form-group" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
+                <label style="margin-bottom:0;">¿Cuántos sois?</label>
+                <input type="number" id="total-invitados" value="1" min="1" oninput="actualizarContadores()" class="input-number-small">
+            </div>
+
+            <div class="form-group">
+                <p style="text-align:center; font-size: 1.8rem; color: var(--color-oro); margin-bottom: 15px;">Selección de platos:</p>
+                
+                <div class="plate-selector">
+                    <span>Carrillera en salsa con gratinado de patatas</span>
+                    <input type="number" id="plato-carne" value="0" min="0" oninput="validarSuma()" class="input-number-small">
+                </div>
+
+                <div class="plate-selector">
+                    <span>Lomo de merluza en salsa verde con gratinado de patata</span>
+                    <input type="number" id="plato-pescado" value="0" min="0" oninput="validarSuma()" class="input-number-small">
+                </div>
+
+                <div class="plate-selector">
+                    <span>Menú infantil</span>
+                    <input type="number" id="plato-infantil" value="0" min="0" oninput="validarSuma()" class="input-number-small">
+                </div>
+
+                <p id="aviso-platos">Platos por asignar: <span id="pendientes">1</span></p>
+            </div>
+
+            <div class="form-group" style="margin-top: 20px;">
+                <label>Alergias o intolerancias:</label>
+                <input type="text" id="alergias-menu" placeholder="Ninguna / Detalles...">
+            </div>
+
+            <div class="btn-confirmar" onclick="enviarEleccion()"></div>
+            <p class="tap-msg">(Toca la cámara para enviar)</p>
+        </div>
+    </div>
+
+    <script>
+        function actualizarContadores() {
+            const total = parseInt(document.getElementById('total-invitados').value) || 0;
+            const carne = parseInt(document.getElementById('plato-carne').value) || 0;
+            const pescado = parseInt(document.getElementById('plato-pescado').value) || 0;
+            const infantil = parseInt(document.getElementById('plato-infantil').value) || 0;
+            const pendientes = total - (carne + pescado + infantil);
+            document.getElementById('pendientes').innerText = Math.max(0, pendientes);
+        }
+
+        function validarSuma() {
+            const total = parseInt(document.getElementById('total-invitados').value) || 0;
+            let carne = document.getElementById('plato-carne');
+            let pescado = document.getElementById('plato-pescado');
+            let infantil = document.getElementById('plato-infantil');
+            let vCarne = parseInt(carne.value) || 0;
+            let vPescado = parseInt(pescado.value) || 0;
+            let vInfantil = parseInt(infantil.value) || 0;
+
+            if (vCarne + vPescado + vInfantil > total) {
+                const trigger = event.target;
+                if (trigger.id === 'plato-carne') carne.value = Math.max(0, total - vPescado - vInfantil);
+                else if (trigger.id === 'plato-pescado') pescado.value = Math.max(0, total - vCarne - vInfantil);
+                else infantil.value = Math.max(0, total - vCarne - vPescado);
+            }
+            actualizarContadores();
+        }
+
+        function enviarEleccion() {
+            const nombre = document.getElementById('nombre-menu').value;
+            const total = document.getElementById('total-invitados').value;
+            const carne = document.getElementById('plato-carne').value || 0;
+            const pescado = document.getElementById('plato-pescado').value || 0;
+            const infantil = document.getElementById('plato-infantil').value || 0;
+            const alergias = document.getElementById('alergias-menu').value || "Ninguna";
+
+            if (!nombre) { alert("Por favor, indicad vuestro nombre."); return; }
+            if ((parseInt(carne) + parseInt(pescado) + parseInt(infantil)) != parseInt(total)) {
+                alert("Por favor, asignad un plato para cada invitado."); return;
+            }
+
+            // PEGA AQUÍ TU URL DEL PASO 1
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbzgvA88sYEbLqDzk5bbxOmrm3O0NsWWyKySUw9ub3x3l-UY4msYjef4RR-lhV37tDv1/exec';
+            
+            const datos = new URLSearchParams();
+            datos.append('nombre', nombre);
+            datos.append('total', total);
+            datos.append('carrilleras', carne);
+            datos.append('merluza', pescado);
+            datos.append('infantil', infantil);
+            datos.append('notas', alergias);
+
+            fetch(scriptURL, { method: 'POST', body: datos, mode: 'no-cors' });
+
+            let msj = `¡Hola Rafa y Ana! Elección de menú:%0A%0A- Nombre: ${nombre}%0A- Personas: ${total}%0A- Menú:%0A  · ${carne} Carrillera%0A  · ${pescado} Merluza%0A  · ${infantil} Infantil%0A- Alergias: ${alergias}`;
+            alert("¡Muchas gracias! Elección guardada.");
+            window.open(`https://wa.me/34678891185?text=${msj}`, '_blank');
+        }
+    </script>
+</body>
+</html>
